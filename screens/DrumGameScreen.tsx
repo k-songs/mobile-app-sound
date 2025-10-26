@@ -10,7 +10,11 @@ import {
 } from 'react-native';
 import { Audio } from 'expo-av';
 import LottieView from 'lottie-react-native';
-import { Colors } from '@/constants/GlobalStyles';
+import Title from '../components/ui/Title';
+import Card from '../components/ui/Card';
+import InstructionText from '../components/ui/InstructionText';
+import PrimaryButton from '../components/ui/PrimaryButton';
+import Colors from '../constants/Colors';
 import { DRUM_INSTRUMENTS, InstrumentType, DifficultyType, DIFFICULTY_LEVELS } from '@/constants/drumSounds';
 
 interface DrumGameScreenProps {
@@ -141,15 +145,15 @@ function DrumGameScreen({ difficulty: selectedDifficulty = 'intermediate', onGam
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>타악기 맞히기 게임</Text>
-
+      <Title>타악기 맞히기 게임</Title>
+      
       <View style={styles.scoreContainer}>
         <Text style={styles.scoreText}>
           라운드: {round}/{maxRounds} | 점수: {score}
         </Text>
       </View>
 
-      <View style={[styles.card, styles.gameCard]}>
+      <Card style={styles.gameCard}>
         {/* Lottie 애니메이션 영역 */}
         <View style={styles.animationContainer}>
           {showAnimation && currentInstrument ? (
@@ -160,22 +164,22 @@ function DrumGameScreen({ difficulty: selectedDifficulty = 'intermediate', onGam
                 loop
                 style={styles.lottieAnimation}
               />
-            ) : (
+            ) : ( // lottie가 없을 경우, emoji 없이 바로 기본 폴백
               <View style={styles.placeholderAnimation}>
-                <Text style={styles.placeholderText}>🥁</Text>
-                <Text style={styles.instructionText}>재생 버튼을 눌러주세요</Text>
+                <Text style={styles.placeholderText}>?</Text> {/* Lottie가 없을 때 표시 */}
+                <InstructionText>재생 버튼을 눌러주세요</InstructionText>
               </View>
             )
           ) : (
             <View style={styles.placeholderAnimation}>
-              <Text style={styles.placeholderText}>🥁</Text>
-              <Text style={styles.instructionText}>재생 버튼을 눌러주세요</Text>
+              <Text style={styles.placeholderText}>🥁</Text> {/* 기본 아이콘 */}
+              <InstructionText>재생 버튼을 눌러주세요</InstructionText>
             </View>
           )}
         </View>
 
         {/* 피드백 메시지 표시 */}
-        {showFeedback && (
+        {showFeedback && ( // showFeedback 상태에 따라 피드백 메시지를 조건부 렌더링
           <View style={styles.feedbackContainer}>
             <Text style={styles.feedbackText}>{feedbackMessage}</Text>
           </View>
@@ -183,25 +187,25 @@ function DrumGameScreen({ difficulty: selectedDifficulty = 'intermediate', onGam
 
         {/* 재생 버튼 */}
         <View style={styles.playButtonContainer}>
-          <TouchableOpacity
-            onPress={playSound}
+          <PrimaryButton 
+            onPress={playSound} 
             disabled={isPlaying}
-            style={[styles.primaryButton, styles.playButton, isPlaying && styles.disabledButton]}
+            style={[styles.playButton, isPlaying && styles.disabledButton]}
           >
             {isPlaying ? (
               <ActivityIndicator color="white" />
             ) : (
               <Text style={styles.buttonText}>🔊 소리 재생</Text>
             )}
-          </TouchableOpacity>
+          </PrimaryButton>
         </View>
 
         {/* 선택지 버튼들 */}
         {gameState === 'answered' && (
           <View style={styles.choicesContainer}>
-            <Text style={[styles.instructionText, styles.choiceInstruction]}>
+            <InstructionText style={styles.choiceInstruction}>
               어떤 악기 소리였을까요?
-            </Text>
+            </InstructionText>
             <View style={styles.choiceButtons}>
               {choices.map((instrument) => (
                 <TouchableOpacity
@@ -217,13 +221,13 @@ function DrumGameScreen({ difficulty: selectedDifficulty = 'intermediate', onGam
             </View>
           </View>
         )}
-      </View>
+      </Card>
 
       {/* 게임 리셋 버튼 */}
       <View style={styles.resetContainer}>
-        <TouchableOpacity onPress={resetGame} style={[styles.primaryButton, styles.resetButton]}>
+        <PrimaryButton onPress={resetGame} style={styles.resetButton}>
           <Text style={styles.buttonText}>다시 시작</Text>
-        </TouchableOpacity>
+        </PrimaryButton>
       </View>
     </View>
   );
@@ -235,41 +239,6 @@ const styles = StyleSheet.create({
     padding: 24,
     justifyContent: 'center',
   },
-  title: {
-    fontFamily: 'open-sans-bold',
-    fontSize: 24,
-    color: Colors.accent.main,
-    textAlign: 'center',
-    borderWidth: 2,
-    borderColor: Colors.accent.main,
-    padding: 12,
-    marginBottom: 20,
-  },
-  card: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginHorizontal: 24,
-    marginTop: 36,
-    padding: 16,
-    backgroundColor: Colors.primary.darkest,
-    borderRadius: 8,
-    elevation: 4,
-  },
-  instructionText: {
-    fontFamily: 'open-sans',
-    fontSize: 24,
-    color: Colors.accent.main,
-  },
-  primaryButton: {
-    borderRadius: 28,
-    margin: 4,
-    overflow: "hidden",
-    marginBottom: 4,
-    backgroundColor: Colors.primary.main,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    elevation: 2,
-  },
   scoreContainer: {
     alignItems: 'center',
     marginBottom: 20,
@@ -277,7 +246,7 @@ const styles = StyleSheet.create({
   scoreText: {
     fontSize: 18,
     fontFamily: 'open-sans-bold',
-    color: Colors.primary.darkest,
+    color: Colors.primary800,
   },
   gameCard: {
     marginBottom: 20,
@@ -320,7 +289,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   choiceButton: {
-    backgroundColor: Colors.primary.dark,
+    backgroundColor: Colors.primary600,
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
@@ -351,7 +320,7 @@ const styles = StyleSheet.create({
   feedbackText: {
     fontSize: 22,
     fontFamily: 'open-sans-bold',
-    color: Colors.primary.darkest, // 또는 적절한 색상
+    color: Colors.primary800, // 또는 적절한 색상
     textAlign: 'center',
   },
 });

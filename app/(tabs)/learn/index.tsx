@@ -192,7 +192,7 @@ export default function LearnIndex() {
   const [showResult, setShowResult] = useState(false);
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
   const [showRelicAnimation, setShowRelicAnimation] = useState(false);
-  const [relicType, setRelicType] = useState<'confetti' | 'treasure' | 'sparkle' | 'medal' | 'levelup'>('confetti');
+  const [relicType, setRelicType] = useState<'confetti' | 'treasure' | 'sparkle' | 'splash' | 'levelup'>('confetti');
   const [showStageTransition, setShowStageTransition] = useState(false);
   const [stageTransition, setStageTransition] = useState<{ from: number; to: number } | null>(null);
   const [showComboCelebration, setShowComboCelebration] = useState(false);
@@ -300,7 +300,7 @@ export default function LearnIndex() {
     setTimeout(() => setJudgement(null), 1000);
   }, [gameState.judgement]);
 
-  const triggerRelicAnimation = useCallback((type: 'confetti' | 'treasure' | 'sparkle' | 'medal' | 'levelup') => {
+  const triggerRelicAnimation = useCallback((type: 'confetti' | 'treasure' | 'sparkle' | 'splash' | 'levelup') => {
     setRelicType(type);
     setShowRelicAnimation(true);
     setTimeout(() => setShowRelicAnimation(false), 2000);

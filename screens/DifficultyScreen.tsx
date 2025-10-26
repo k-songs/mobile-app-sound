@@ -1,6 +1,9 @@
 import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { Colors } from '@/constants/GlobalStyles';
+import { View, StyleSheet } from 'react-native';
+import Title from '../components/ui/Title';
+import PrimaryButton from '../components/ui/PrimaryButton';
+import Card from '../components/ui/Card';
+import InstructionText from '../components/ui/InstructionText';
 
 interface DifficultyScreenProps {
   onSelectDifficulty: (difficulty: number) => void;
@@ -9,29 +12,29 @@ interface DifficultyScreenProps {
 function DifficultyScreen({ onSelectDifficulty }: DifficultyScreenProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>난이도 선택</Text>
-
-      <View style={[styles.card, styles.card]}>
-        <Text style={[styles.instructionText, styles.instruction]}>
+      <Title>난이도 선택</Title>
+      
+      <Card style={styles.card}>
+        <InstructionText style={styles.instruction}>
           게임 난이도를 선택해주세요
-        </Text>
-
+        </InstructionText>
+        
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
+          <PrimaryButton 
             onPress={() => onSelectDifficulty(2)}
-            style={[styles.primaryButton, styles.button]}
+            style={styles.button}
           >
-            <Text style={styles.buttonText}>초급 (2가지 악기)</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
+            초급 (2가지 악기)
+          </PrimaryButton>
+          
+          <PrimaryButton 
             onPress={() => onSelectDifficulty(4)}
-            style={[styles.primaryButton, styles.button]}
+            style={styles.button}
           >
-            <Text style={styles.buttonText}>중급 (4가지 악기)</Text>
-          </TouchableOpacity>
+            중급 (4가지 악기)
+          </PrimaryButton>
         </View>
-      </View>
+      </Card>
     </View>
   );
 }
@@ -42,44 +45,12 @@ const styles = StyleSheet.create({
     padding: 24,
     justifyContent: 'center',
   },
-  title: {
-    fontFamily: 'open-sans-bold',
-    fontSize: 24,
-    color: Colors.accent.main,
-    textAlign: 'center',
-    borderWidth: 2,
-    borderColor: Colors.accent.main,
-    padding: 12,
-    marginBottom: 30,
-  },
   card: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginHorizontal: 24,
-    marginTop: 36,
-    padding: 16,
-    backgroundColor: Colors.primary.darkest,
-    borderRadius: 8,
-    elevation: 4,
-  },
-  instructionText: {
-    fontFamily: 'open-sans',
-    fontSize: 24,
-    color: Colors.accent.main,
+    alignItems: 'center',
   },
   instruction: {
     textAlign: 'center',
     marginBottom: 30,
-  },
-  primaryButton: {
-    borderRadius: 28,
-    margin: 4,
-    overflow: "hidden",
-    marginBottom: 4,
-    backgroundColor: Colors.primary.main,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    elevation: 2,
   },
   buttonContainer: {
     width: '100%',
@@ -87,12 +58,6 @@ const styles = StyleSheet.create({
   },
   button: {
     marginHorizontal: 20,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontFamily: 'open-sans-bold',
-    textAlign: "center",
   },
 });
 

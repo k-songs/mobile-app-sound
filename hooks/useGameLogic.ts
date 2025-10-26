@@ -1,183 +1,114 @@
 import { useState, useCallback } from 'react';
-import { QuestionCount, DifficultyLevel, SoundSpeed, GameResult, MAX_SETS, SOUND_SPEED_CONFIG } from '@/types/game';
-import { useAvatarProgress } from './useAvatarProgress';
+import { DIFFICULTY_LEVELS, DRUM_INSTRUMENTS, InstrumentType, DifficultyType } from '../constants/drumSounds';
 
-export interface GameSettings {
-    questionCount: QuestionCount;
-    difficulty: string;
-    soundSpeed: string;
-    trainingMode: string;
+export type GameState = 'ready' | 'playing' | 'answered' | 'waitingForNextRound';
+
+interface UseGameLogicProps {
+  difficulty: DifficultyType;
+  onGameComplete?: (score: number, maxScore: number, percentage: number) => void;
 }
 
-export interface GameState {
-    gameStarted: boolean;
-    currentQuestion: number;
-    score: number;
-    perfectCount: number;
-    goodCount: number;
-    missCount: number;
-    currentSet: number;
-    maxCombo: number;
-    combo: number;
-}
+export function useGameLogic({ difficulty, onGameComplete }: UseGameLogicProps) {
+  const [currentInstrument, setCurrentInstrument] = useState<InstrumentType | null>(null);
+  const [choices, setChoices] = useState<InstrumentType[]>([]);
+  const [gameState, setGameState] = useState<GameState>('ready');
+  const [score, setScore] = useState(0);
+  const [round, setRound] = useState(1);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState('');
 
-export interface UseGameLogicReturn {
-    // Settings
-    settings: GameSettings;
-    setSettings: React.Dispatch<React.SetStateAction<GameSettings>>;
-    showSettings: boolean;
-    setShowSettings: React.Dispatch<React.SetStateAction<boolean>>;
+  const currentDifficulty = DIFFICULTY_LEVELS[difficulty];
+  const availableInstruments = currentDifficulty.instruments;
+  const maxRounds = currentDifficulty.rounds;
 
-    // Game State
-    gameState: GameState;
-    setGameState: React.Dispatch<React.SetStateAction<GameState>>;
+  const startNewRound = useCallback(() => {
+    // 정답 악기 랜덤 선택
+    const correctInstrument =
+      availableInstruments[Math.floor(Math.random() * availableInstruments.length)];
+    setCurrentInstrument(correctInstrument);
 
-    // Avatar Progress
-    avatarProgress: ReturnType<typeof useAvatarProgress>['progress'];
-    currentLevelInfo: ReturnType<typeof useAvatarProgress>['currentLevelInfo'];
-    nextLevelInfo: ReturnType<typeof useAvatarProgress>['nextLevelInfo'];
-    levelProgress: ReturnType<typeof useAvatarProgress>['levelProgress'];
-    isLeveledUp: ReturnType<typeof useAvatarProgress>['isLeveledUp'];
-    newLevelInfo: ReturnType<typeof useAvatarProgress>['newLevelInfo'];
-    addPerfects: ReturnType<typeof useAvatarProgress>['addPerfects'];
-    closeLevelUpModal: ReturnType<typeof useAvatarProgress>['closeLevelUpModal'];
+    // 오답 선택지 생성
+    const wrongChoices = availableInstruments
+      .filter((inst) => inst !== correctInstrument)
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 2); // 2개의 오답
 
-    // Game Actions
-    startGame: () => void;
-    finishSet: (result: GameResult, showResult?: boolean) => void;
-    continueGame: () => void;
-    resetGame: () => void;
+    // 전체 선택지 섞기
+    const allChoices = [correctInstrument, ...wrongChoices].sort(
+      () => 0.5 - Math.random()
+    );
 
-    // Game State Updates
-    updateScore: (points: number) => void;
-    updateCombo: (isCorrect: boolean) => void;
-    updateSettings: (newSettings: Partial<GameSettings>) => void;
-}
+    setChoices(allChoices);
+    setGameState('ready');
+  }, [availableInstruments]);
 
-export const useGameLogic = (initialSettings: GameSettings): UseGameLogicReturn => {
-    const [settings, setSettings] = useState<GameSettings>(initialSettings);
-    const [showSettings, setShowSettings] = useState(false);
+  const handleAnswer = useCallback(
+    (selectedInstrument: InstrumentType) => {
+      if (gameState !== 'answered') {
+        return;
+      }
 
-    const [gameState, setGameState] = useState<GameState>({
-        gameStarted: false,
-        currentQuestion: 0,
-        score: 0,
-        perfectCount: 0,
-        goodCount: 0,
-        missCount: 0,
-        currentSet: 1,
-        maxCombo: 0,
-        combo: 0,
-    });
+      const isCorrect = selectedInstrument === currentInstrument;
+      let newScore = score;
 
-    // Avatar Progress Hook
-    const avatarProgressData = useAvatarProgress();
+      if (isCorrect) {
+        newScore = score + 1;
+        setScore(newScore);
+        setFeedbackMessage('정답! 🎉 잘하셨습니다!');
+        setShowFeedback(true);
+      } else {
+        setFeedbackMessage(
+          `오답! 정답은 "${DRUM_INSTRUMENTS[currentInstrument!].name}"입니다.`
+        );
+        setShowFeedback(true);
+      }
 
-    // Game Actions
-    const startGame = useCallback(() => {
-        setGameState(prev => ({ ...prev, gameStarted: true }));
-    }, []);
+      setGameState('waitingForNextRound');
 
-    const finishSet = useCallback((result: GameResult, showResult: boolean = true) => {
-        // 아바타 진행도 업데이트
-        const accuracy = (result.perfectCount / result.totalQuestions) * 100;
-        avatarProgressData.addPerfects(result.perfectCount, accuracy);
-
-        if (showResult) {
-            // 결과 표시 로직
-            console.log('게임 완료:', result);
+      setTimeout(() => {
+        setShowFeedback(false);
+        if (round >= maxRounds) {
+          onGameComplete?.(newScore, maxRounds, Math.round((newScore / maxRounds) * 100));
+        } else {
+          setRound((prevRound) => prevRound + 1);
+          startNewRound();
         }
+      }, 1000);
+    },
+    [gameState, currentInstrument, score, round, maxRounds, onGameComplete, startNewRound]
+  );
 
-        setGameState(prev => ({
-            ...prev,
-            gameStarted: false,
-            currentQuestion: 0,
-            score: 0,
-            perfectCount: 0,
-            goodCount: 0,
-            missCount: 0,
-            currentSet: prev.currentSet + 1,
-        }));
-    }, [avatarProgressData]);
+  const resetGame = useCallback(() => {
+    setScore(0);
+    setRound(1);
+    startNewRound();
+  }, [startNewRound]);
 
-    const continueGame = useCallback(() => {
-        startGame();
-    }, [startGame]);
+  const startPlaying = useCallback(() => {
+    setGameState('playing');
+  }, []);
 
-    const resetGame = useCallback(() => {
-        setGameState({
-            gameStarted: false,
-            currentQuestion: 0,
-            score: 0,
-            perfectCount: 0,
-            goodCount: 0,
-            missCount: 0,
-            currentSet: 1,
-            maxCombo: 0,
-            combo: 0,
-        });
-    }, []);
+  const setAnswered = useCallback(() => {
+    setGameState('answered');
+  }, []);
 
-    // Game State Updates
-    const updateScore = useCallback((points: number) => {
-        setGameState(prev => ({
-            ...prev,
-            score: prev.score + points,
-            currentQuestion: prev.currentQuestion + 1
-        }));
-    }, []);
-
-    const updateCombo = useCallback((isCorrect: boolean) => {
-        setGameState(prev => {
-            const newCombo = isCorrect ? prev.combo + 1 : 0;
-            const newMaxCombo = isCorrect && newCombo > prev.maxCombo ? newCombo : prev.maxCombo;
-
-            return {
-                ...prev,
-                combo: newCombo,
-                maxCombo: newMaxCombo,
-                perfectCount: isCorrect ? prev.perfectCount + 1 : prev.perfectCount,
-                missCount: isCorrect ? prev.missCount : prev.missCount + 1,
-            };
-        });
-    }, []);
-
-    const updateSettings = useCallback((newSettings: Partial<GameSettings>) => {
-        setSettings(prev => ({ ...prev, ...newSettings }));
-    }, []);
-
-    return {
-        // Settings
-        settings,
-        setSettings,
-        showSettings,
-        setShowSettings,
-
-        // Game State
-        gameState,
-        setGameState,
-
-        // Avatar Progress
-        avatarProgress: avatarProgressData.progress,
-        currentLevelInfo: avatarProgressData.currentLevelInfo,
-        nextLevelInfo: avatarProgressData.nextLevelInfo,
-        levelProgress: avatarProgressData.levelProgress,
-        isLeveledUp: avatarProgressData.isLeveledUp,
-        newLevelInfo: avatarProgressData.newLevelInfo,
-        addPerfects: avatarProgressData.addPerfects,
-        closeLevelUpModal: avatarProgressData.closeLevelUpModal,
-
-        // Game Actions
-        startGame,
-        finishSet,
-        continueGame,
-        resetGame,
-
-        // Game State Updates
-        updateScore,
-        updateCombo,
-        updateSettings,
-    };
-};
-
-export default useGameLogic;
+  return {
+    // State
+    currentInstrument,
+    choices,
+    gameState,
+    score,
+    round,
+    showFeedback,
+    feedbackMessage,
+    currentDifficulty,
+    maxRounds,
+    
+    // Actions
+    startNewRound,
+    handleAnswer,
+    resetGame,
+    startPlaying,
+    setAnswered,
+  };
+}

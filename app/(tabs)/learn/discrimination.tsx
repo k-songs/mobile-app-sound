@@ -722,9 +722,7 @@ const styles = StyleSheet.create({
         ...Typography.body,
         color: Colors.accent.main,
         fontWeight: 'bold',
-        textShadowColor: 'rgba(0, 0, 0, 0.3)',
-        textShadowOffset: { width: 1, height: 1 },
-        textShadowRadius: 2,
+   
     },
     artifactSubAnimation: {
         ...Typography.caption,

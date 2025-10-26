@@ -1,4 +1,4 @@
-export { GameHeader } from './GameHeader';
-export { GameSettingsSection } from './GameSettingsSection';
-export { GameGamificationCard } from './GameGamificationCard';
-export { GameStartButton } from './GameStartButton';
+export { default as DrumGame } from './DrumGame';
+export { InstrumentDisplay } from './InstrumentDisplay';
+export { ChoiceButtons } from './ChoiceButtons';
+export { GameControls } from './GameControls';

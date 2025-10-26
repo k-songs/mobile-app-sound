@@ -1,5 +1,5 @@
 import { Slot } from "expo-router";
 
-export default function ActivityLayout() {
+export default function AddLayout() {
   return <Slot />;
 }

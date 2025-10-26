@@ -1,13 +1,15 @@
 import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { Colors } from '@/constants/GlobalStyles';
-import LottieView from 'lottie-react-native';
+import { View, StyleSheet, Text } from 'react-native';
+import Title from '../components/ui/Title';
+import PrimaryButton from '../components/ui/PrimaryButton';
+import Card from '../components/ui/Card';
+import Colors from '../constants/Colors';
+import LottieView from 'lottie-react-native'; // LottieView 임포트
 
 // Lottie JSON 파일 임포트
 const effortAnimation = require('../assets/lottie/effort.json');
 const silverAnimation = require('../assets/lottie/shilvermedal.json'); 
 const goldAnimation = require('../assets/lottie/shilvermedal.json'); 
-
 interface DrumGameOverScreenProps {
   score: number;
   maxScore: number;
@@ -15,15 +17,16 @@ interface DrumGameOverScreenProps {
   onGoHome: () => void;
 }
 
+
 interface GradeResult {
   grade: string;
-  emoji: string;
+  emoji: string; // 이모지 또는 null을 허용하도록 타입 변경
   message: string;
 }
 
 function DrumGameOverScreen({ score, maxScore, onRestart, onGoHome }: DrumGameOverScreenProps) {
   const percentage = Math.round((score / maxScore) * 100);
-  const lottieRef = React.useRef<any>(null);
+  const lottieRef = React.useRef<LottieView>(null);
   const animationEndFrame = 626; // 1840 프레임의 약 2/3 지점
 
   const getGradeMessage = (): GradeResult => {
@@ -42,9 +45,9 @@ function DrumGameOverScreen({ score, maxScore, onRestart, onGoHome }: DrumGameOv
     // 기본값 (예상치 못한 maxScore 값의 경우)
     if (percentage >= 90) return { grade: '최우수', emoji: '', message: '완벽합니다!' };
     if (percentage >= 80) return { grade: '우수', emoji: '', message: '훌륭해요!' };
-    if (percentage >= 70) return { grade: '양호', emoji: "", message: '잘했어요!' };
+    if (percentage >= 70) return { grade: '양호', emoji: "", message: '잘했어요!' }; // Lottie 사용을 위해 null
     if (percentage >= 60) return { grade: '보통', emoji: '', message: '좋은 시도예요!' };
-    return { grade: '노력 필요', emoji: "", message: '더 연습해보세요!' };
+    return { grade: '노력 필요', emoji: "", message: '더 연습해보세요!' }; // Lottie 사용을 위해 null
   };
 
   const { grade, emoji, message } = getGradeMessage();
@@ -53,13 +56,13 @@ function DrumGameOverScreen({ score, maxScore, onRestart, onGoHome }: DrumGameOv
   const getLottieSource = () => {
     switch (grade) {
       case '양호':
-        return goldAnimation;
+        return goldAnimation; //
       case '보통':
-        return silverAnimation;
+        return silverAnimation; // 
       case '노력 필요':
-        return effortAnimation;
+        return effortAnimation; // 
       default:
-        return null;
+        return null; // 이모지를 사용하는 등급은 Lottie를 렌더링하지 않음
     }
   };
  
@@ -79,23 +82,24 @@ function DrumGameOverScreen({ score, maxScore, onRestart, onGoHome }: DrumGameOv
  
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>게임 완료!</Text>
-
-      <View style={[styles.card, styles.resultCard]}>
+      <Title>게임 완료!</Title>
+      
+      <Card style={styles.resultCard}>
         <View style={styles.resultHeader}>
-          {lottieSource ? (
-            <LottieView
-              source={lottieSource}
-              autoPlay
-              loop
-              style={styles.lottieAnimation}
-              ref={lottieRef}
-              onAnimationFinish={handleAnimationFinish}
-            />
+          {emoji ? (
+            <Text style={styles.emoji}>{emoji}</Text>
           ) : (
-            <Text style={styles.emoji}>
-              {grade === '최우수' ? '🏆' : grade === '우수' ? '🥈' : grade === '양호' ? '🥉' : '🎯'}
-            </Text>
+            // 등급에 따라 다른 Lottie 애니메이션 렌더링
+            lottieSource && (
+              <LottieView
+                source={lottieSource}
+                autoPlay
+                loop
+                style={styles.lottieAnimation}
+                ref={lottieRef}
+                onAnimationFinish={handleAnimationFinish}
+              />
+            )
           )}
           <Text style={styles.grade}>{grade}</Text>
         </View>
@@ -110,22 +114,22 @@ function DrumGameOverScreen({ score, maxScore, onRestart, onGoHome }: DrumGameOv
         </View>
         
         <Text style={styles.message}>{message}</Text>
-      </View>
+      </Card>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
+        <PrimaryButton 
           onPress={onRestart}
-          style={[styles.primaryButton, styles.button]}
+          style={styles.button}
         >
           <Text style={styles.buttonText}>다시 도전</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
+        </PrimaryButton>
+        
+        <PrimaryButton 
           onPress={onGoHome}
-          style={[styles.primaryButton, styles.button, styles.secondaryButton]}
+          style={[styles.button, styles.secondaryButton]}
         >
           <Text style={styles.buttonText}>나가기</Text>
-        </TouchableOpacity>
+        </PrimaryButton>
       </View>
     </View>
   );
@@ -137,26 +141,6 @@ const styles = StyleSheet.create({
     padding: 24,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  title: {
-    fontFamily: 'open-sans-bold',
-    fontSize: 24,
-    color: Colors.accent.main,
-    textAlign: 'center',
-    borderWidth: 2,
-    borderColor: Colors.accent.main,
-    padding: 12,
-    marginBottom: 30,
-  },
-  card: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginHorizontal: 24,
-    marginTop: 36,
-    padding: 16,
-    backgroundColor: Colors.primary.darkest, 
-    borderRadius: 8,
-    elevation: 4,
   },
   resultCard: {
     width: '100%',
@@ -174,7 +158,7 @@ const styles = StyleSheet.create({
   grade: {
     fontSize: 24,
     fontFamily: 'open-sans-bold',
-    color: Colors.primary.darkest,     
+    color: Colors.primary800,
   },
   scoreContainer: {
     alignItems: 'center',
@@ -183,45 +167,34 @@ const styles = StyleSheet.create({
   scoreText: {
     fontSize: 36,
     fontFamily: 'open-sans-bold',
-    color: Colors.primary.dark,
+    color: Colors.primary600,
     marginBottom: 5,
   },
   percentageText: {
     fontSize: 18,
     fontFamily: 'open-sans',
-    color: Colors.primary.dark,
+    color: Colors.primary700,
   },
   message: {
     fontSize: 16,
     fontFamily: 'open-sans',
     textAlign: 'center',
-    color: Colors.primary.darkest,
+    color: Colors.primary800,
   },
   buttonContainer: {
     width: '100%',
     gap: 15,
   },
-  primaryButton: {
-    borderRadius: 28,
-    margin: 4,
-    overflow: "hidden",
-    marginBottom: 4,
-    backgroundColor: Colors.primary.main,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    elevation: 2,
-  },
   button: {
     marginHorizontal: 20,
   },
   secondaryButton: {
-    backgroundColor: Colors.accent.main,
+    backgroundColor: Colors.accent500,
   },
   buttonText: {
     color: 'white',
     fontSize: 16,
     fontFamily: 'open-sans-bold',
-    textAlign: "center",
   },
   lottieAnimation: {
     width: 140, // Lottie 애니메이션 크기 조절

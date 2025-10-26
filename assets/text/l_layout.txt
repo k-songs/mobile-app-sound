@@ -175,7 +175,7 @@ export default function TabLayout() {
         >
           <View style={{ backgroundColor: "white", padding: 20 }}>
             <Pressable onPress={toLoginPage}>
-              <Text>Login Modal</Text>
+              <Text>splashdal</Text>
             </Pressable>
             <TouchableOpacity onPress={closeLoginModal}>
               <Ionicons name="close" size={24} color="#555" />

@@ -1,14 +1,8 @@
-
-/*  '🥁''🔔' '🎵'*/
-// constants/drumSounds.tsx 파일에서 이렇게 변경할 수 있습니다.
-
-// 각 드럼 악기에 대한 모든 정보를 포함하는 통합된 인터페이스
 export interface DrumInstrument {
   name: string;
   description: string;
-  sound: any; // 
-  lottie?: any; //
-
+  sound: any;
+  lottie?: any;
 }
 
 export const DRUM_INSTRUMENTS= {
@@ -16,25 +10,25 @@ export const DRUM_INSTRUMENTS= {
     name: '킥드럼',
     description: '둔탁하고 깊은 저음',
     sound: require('@/assets/sounds/tom_z.mp3'),
-    lottie: require('@/assets/lottie/effort.json'), 
+    // lottie 제거 - 적절한 애니메이션이 없음
   },
   snare: {
     name: '스네어',
     description: '날카롭고 튀는 소리',
     sound: require('@/assets/sounds/snare_z.mp3'),
-    lottie: require('@/assets/lottie/shilvermedal.json'), 
+    // lottie 제거 - 적절한 애니메이션이 없음
   },
   hihat: {
     name: '하이햇',
     description: '짧고 선명한 금속음',
     sound: require('@/assets/sounds/hat_z.mp3'),
-    lottie: require('@/assets/lottie/shilvermedal.json'), 
+    // lottie 제거 - 적절한 애니메이션이 없음
   },
   cymbal: {
     name: '심벌',
     description: '긴 울림의 금속음',
     sound: require('@/assets/sounds/cymbal_z.mp3'),
-    lottie:  require('@/assets/lottie/shilvermedal.json') 
+    // lottie 제거 - 적절한 애니메이션이 없음
   },
 }  as const satisfies Record<string, DrumInstrument>;
 

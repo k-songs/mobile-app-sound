@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur"; // For background blur effect
-import { AuthContext } from "../app/_layout"
 
 interface SideMenuProps {
   isVisible: boolean;
@@ -31,11 +30,9 @@ const SideMenu: React.FC<SideMenuProps> = ({ isVisible, onClose }) => {
   const closeAppearance = () => {
     setIsAppearanceVisible(false);
   };
-  const { logout } = useContext(AuthContext);
+  
   const handleLogout = () => {
-    if (logout) {
-      logout();
-    }
+    // 로그아웃 로직 제거됨
     onClose();
   };
 

@@ -75,7 +75,7 @@ export const Colors = {
   },
 } as const;
 
-// 🎨 스타일 유틸리티 함수들
+// 스타일 유틸리티 함수들
 export const StyleUtils = {
   // 그림자 생성 유틸리티 (iOS 설정 제거)
   createShadow: (elevation: number = 3) => ({

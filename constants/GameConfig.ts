@@ -4,13 +4,13 @@ import {
   SoundSpeed 
 } from '@/types/game';
 
-// 🎮 게임 설정 유틸리티
+
 export const GameConfig = {
-  // 🏆 난이도 설정
+ 
   DIFFICULTY: {
     easy: {
       name: '쉬움',
-      description: '초보자를 위한 난이도',
+      description: '초보자',
       timingThreshold: {
         perfect: 500,
         good: 800,
@@ -19,7 +19,7 @@ export const GameConfig = {
     },
     normal: {
       name: '보통',
-      description: '적당한 도전 난이도',
+      description: '적당',
       timingThreshold: {
         perfect: 300,
         good: 600,
@@ -28,7 +28,7 @@ export const GameConfig = {
     },
     hard: {
       name: '어려움',
-      description: '숙련자를 위한 난이도',
+      description: '숙련자',
       timingThreshold: {
         perfect: 200,
         good: 400,
@@ -37,7 +37,7 @@ export const GameConfig = {
     }
   },
 
-  // 🎲 훈련 모드 설정
+  // 훈련 모드 설정
   TRAINING_MODES: {
     'sound-catch': {
       name: '소리 캐치',
@@ -59,7 +59,7 @@ export const GameConfig = {
     }
   },
 
-  // 🔊 소리 속도 설정
+  //  소리 속도 
   SOUND_SPEED: {
     veryslow: {
       minInterval: 4000,
@@ -88,7 +88,7 @@ export const GameConfig = {
     }
   },
 
-  // 🎵 소리 관련 설정
+  //  설정
   SOUND: {
     FREQUENCIES: {
       A4: 440,
@@ -102,7 +102,7 @@ export const GameConfig = {
     DISPLAY_DURATION: 800 // ms
   },
 
-  // 🛠️ 유틸리티 메서드
+  // 유틸리티 
   utils: {
     // 난이도 필터링
     filterDifficulty: (
@@ -137,6 +137,6 @@ export const GameConfig = {
   }
 };
 
-// 🔊 소리 설정 (별도 export)
+//소리 설정 
 export const SOUND_CONFIG = GameConfig.SOUND;
 

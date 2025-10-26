@@ -11,7 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import LottieView from 'lottie-react-native';
 
-export type RelicType = 'confetti' | 'treasure' | 'sparkle' | 'medal' | 'levelup';
+export type RelicType = 'confetti' | 'treasure' | 'sparkle' | 'splash' | 'levelup';
 
 interface RelicAnimationProps {
   type: RelicType;
@@ -29,7 +29,7 @@ interface RelicAnimationProps {
  * - confetti: 축하 폭죽
  * - treasure: 보물 상자
  * - sparkle: 빛나는 효과
- * - medal: 메달 획득
+ * - splash: 메달 획득
  * - levelup: 레벨업 효과
  */
 export const RelicAnimation: React.FC<RelicAnimationProps> = ({
@@ -71,7 +71,7 @@ export const RelicAnimation: React.FC<RelicAnimationProps> = ({
       });
 
       // 회전 효과 (메달, 보물 타입에만 적용)
-      if (type === 'medal' || type === 'treasure') {
+      if (type === 'splash' || type === 'treasure') {
         rotation.value = withSequence(
           withTiming(360, { duration: duration * 0.6, easing: Easing.out(Easing.cubic) }),
           withTiming(360, { duration: duration * 0.4 })
@@ -93,7 +93,7 @@ export const RelicAnimation: React.FC<RelicAnimationProps> = ({
     transform: [
       { scale: scale.value },
       { translateY: translateY.value },
-      { rotate: type === 'medal' || type === 'treasure' ? `${rotation.value}deg` : '0deg' }
+      { rotate: type === 'splash' || type === 'treasure' ? `${rotation.value}deg` : '0deg' }
     ],
     opacity: opacity.value,
   }));
@@ -104,7 +104,7 @@ export const RelicAnimation: React.FC<RelicAnimationProps> = ({
         return require('../../assets/lottie/confetti.json');
       case 'treasure':
         return require('../../assets/lottie/treasure.json');
-      case 'medal':
+      case 'splash':
         return require('../../assets/lottie/shilvermedal.json');
       case 'sparkle':
         return require('../../assets/lottie/sparkle.json');
@@ -124,7 +124,7 @@ export const RelicAnimation: React.FC<RelicAnimationProps> = ({
         return '💎';
       case 'sparkle':
         return '✨';
-      case 'medal':
+      case 'splash':
         return '🏅';
       case 'levelup':
         return '⭐';
