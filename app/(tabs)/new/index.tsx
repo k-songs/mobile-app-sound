@@ -4,14 +4,15 @@ import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } fr
 import { ClearContext } from '../../../context/ClearContext';
 import { StarContext } from '../../../context/StarContext';
 import { useRouter } from 'expo-router';
+import { GAME_DATA } from './utils/gameData';
 
-const games = [
-    { id: 'matchGame', name: '소리 맞추기', icon: 'game-controller-outline', route: '(games)/matchGame' },
-    { id: 'orderGame', name: '소리 순서', icon: 'swap-horizontal-outline', route: '(games)/orderGame' },
-    { id: 'music', name: '피아노', icon: 'musical-notes-outline', route: '(games)/music' },
-    { id: 'matchGameRL', name: '강화학습', icon: 'rocket-outline', route: '(games)/matchGameAI' },
-    { id: 'matchGamePG', name: 'PG', icon: 'analytics-outline', route: '(games)/matchGamePG' },
-] as const;
+
+const games = GAME_DATA.map(({ id, name, icon, route }) => ({
+    id,
+    name,
+    icon,
+    route: route.index
+}));
 
 // music 게임의 난이도 개수
 const MUSIC_DIFFICULTY_COUNT = 5;
@@ -30,7 +31,7 @@ export default function App() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.navigationBar}>
-                <ScrollView 
+                <  ScrollView 
                     horizontal 
                     showsHorizontalScrollIndicator={false} 
                     contentContainerStyle={styles.navScrollView}

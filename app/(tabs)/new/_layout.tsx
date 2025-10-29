@@ -6,17 +6,16 @@ import { Ionicons } from '@expo/vector-icons';
 import SideMenu from '@/components/SideMenu';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
+import { GAME_DATA } from './utils/gameData';
 
 // 게임 탭 데이터
-const gameTabs = [
-  { id: 'index', name: '게임 선택', route: '/new' },
-  { id: 'matchGame', name: '소리 맞추기', route: '/new/(games)/matchGame' },
-  { id: 'orderGame', name: '소리 순서', route: '/new/(games)/orderGame' },
-  { id: 'music', name: '피아노', route: '/new/(games)/music' },
-  { id: 'matchGameAI', name: 'AI 게임', route: '/new/(games)/matchGameAI' },
-  { id: 'matchGamePG', name: 'PG 게임', route: '/new/(games)/matchGamePG' },
-  { id: 'matchGameRL', name: '강화학습', route: '/new/(games)/matchGameRL' },
-];
+const gameTabs = GAME_DATA.map(( { id,name, route }) => ({
+   id,
+   name,
+   route: route.layout,
+}));
+
+
 
 export default function Layout() {
   const insets = useSafeAreaInsets();
@@ -50,11 +49,11 @@ export default function Layout() {
                     style={styles.headerLogo}
                   />
                 </BlurView>
-                
+
                 {/* 커스텀 탭 네비게이션 */}
                 <View style={styles.tabContainer}>
-                  <ScrollView 
-                    horizontal 
+                  <ScrollView
+                    horizontal
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={styles.tabScrollView}
                   >
@@ -79,9 +78,9 @@ export default function Layout() {
         />
 
         {/* 게임 라우트들 */}
-        <Stack.Screen 
-          name="(games)/matchGame" 
-          options={{ 
+        <Stack.Screen
+          name="(games)/matchGame"
+          options={{
             headerShown: true,
             header: () => (
               <View style={{ paddingTop: insets.top, backgroundColor: 'transparent' }}>
@@ -100,11 +99,11 @@ export default function Layout() {
                 </BlurView>
               </View>
             ),
-          }} 
+          }}
         />
-        <Stack.Screen 
-          name="(games)/orderGame" 
-          options={{ 
+        <Stack.Screen
+          name="(games)/orderGame"
+          options={{
             headerShown: true,
             header: () => (
               <View style={{ paddingTop: insets.top, backgroundColor: 'transparent' }}>
@@ -123,11 +122,11 @@ export default function Layout() {
                 </BlurView>
               </View>
             ),
-          }} 
+          }}
         />
-        <Stack.Screen 
-          name="(games)/music" 
-          options={{ 
+        <Stack.Screen
+          name="(games)/music"
+          options={{
             headerShown: true,
             header: () => (
               <View style={{ paddingTop: insets.top, backgroundColor: 'transparent' }}>
@@ -146,11 +145,11 @@ export default function Layout() {
                 </BlurView>
               </View>
             ),
-          }} 
+          }}
         />
-        <Stack.Screen 
-          name="(games)/matchGameAI" 
-          options={{ 
+        <Stack.Screen
+          name="(games)/matchGameAI"
+          options={{
             headerShown: true,
             header: () => (
               <View style={{ paddingTop: insets.top, backgroundColor: 'transparent' }}>
@@ -169,11 +168,11 @@ export default function Layout() {
                 </BlurView>
               </View>
             ),
-          }} 
+          }}
         />
-        <Stack.Screen 
-          name="(games)/matchGamePG" 
-          options={{ 
+        <Stack.Screen
+          name="(games)/matchGamePG"
+          options={{
             headerShown: true,
             header: () => (
               <View style={{ paddingTop: insets.top, backgroundColor: 'transparent' }}>
@@ -192,11 +191,11 @@ export default function Layout() {
                 </BlurView>
               </View>
             ),
-          }} 
+          }}
         />
-        <Stack.Screen 
-          name="(games)/matchGameRL" 
-          options={{ 
+        <Stack.Screen
+          name="(games)/matchGameRL"
+          options={{
             headerShown: true,
             header: () => (
               <View style={{ paddingTop: insets.top, backgroundColor: 'transparent' }}>
@@ -215,7 +214,7 @@ export default function Layout() {
                 </BlurView>
               </View>
             ),
-          }} 
+          }}
         />
       </Stack>
 
@@ -235,6 +234,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     height: 50,
+    backgroundColor: 'red',
   },
   menuButton: {
     padding: 8,
@@ -249,9 +249,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderTopWidth: 1,
     borderTopColor: '#E0E0E0',
+
   },
   tabScrollView: {
-    flexDirection: 'row',
+
     alignItems: 'center',
     paddingHorizontal: 10,
   },
@@ -260,7 +261,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     marginHorizontal: 4,
     borderRadius: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: 'rgba(236, 230, 230, 0.9)',
+    borderWidth:1,
+    borderColor: 'rgba(117, 117, 117, 0.9)',
   },
   tabText: {
     fontSize: 14,

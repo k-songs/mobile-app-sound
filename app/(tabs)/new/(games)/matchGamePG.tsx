@@ -54,19 +54,19 @@ class AudioManager {
         console.log(`${this.sounds.size}개의 사운드를 성공적으로 로드했습니다.`);
     }
 
-    async playSound(name: string) {
-        try {
-            const soundObject = this.sounds.get(name);
-            if (soundObject) {
-                await soundObject.stopAsync();
-                await soundObject.replayAsync();
-            } else {
-                console.error(`'${name}' 사운드를 찾을 수 없습니다. 로드되지 않았을 수 있습니다.`);
-            }
-        } catch(e) {
-            console.error(`'${name}' 사운드 재생 중 오류 발생:`, e);
+ 
+async playSound(name: string) {
+    try {
+        const soundObject = this.sounds.get(name);
+        if (soundObject) {
+            await soundObject.playFromPositionAsync(0);
+        } else {
+            console.error(`'${name}' 사운드를 찾을 수 없습니다.`);
         }
+    } catch(e) {
+        console.error(`'${name}' 사운드 재생 중 오류 발생:`, e);
     }
+}
 }
 const audioManager = AudioManager.getInstance();
 

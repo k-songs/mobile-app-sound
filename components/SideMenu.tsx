@@ -76,7 +76,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isVisible, onClose }) => {
                       : styles.menuTextLight,
                   ]}
                 >
-                  Appearance
+                  배경색 변경
                 </Text>
                 <Ionicons name="chevron-forward" size={20} color="#888" />
               </TouchableOpacity>
@@ -163,7 +163,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isVisible, onClose }) => {
                     : styles.appearanceTextLight,
                 ]}
               >
-                Appearance
+                테마 변경
               </Text>
             </View>
             <View style={{ flexDirection: "row", gap: 10 }}>
