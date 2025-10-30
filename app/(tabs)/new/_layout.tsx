@@ -6,14 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import SideMenu from '@/components/SideMenu';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
-import { GAME_DATA } from './utils/gameData';
 
-// 게임 탭 데이터
-const gameTabs = GAME_DATA.map(( { id,name, route }) => ({
-   id,
-   name,
-   route: route.layout,
-}));
+// 게임 탭 데이터 제거 (하단 버튼으로 통합)
 
 
 
@@ -49,28 +43,6 @@ export default function Layout() {
                     style={styles.headerLogo}
                   />
                 </BlurView>
-
-                {/* 커스텀 탭 네비게이션 */}
-                <View style={styles.tabContainer}>
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={styles.tabScrollView}
-                  >
-                    {gameTabs.map((tab) => (
-                      <Pressable
-                        key={tab.id}
-                        style={styles.tabButton}
-                        onPress={() => {
-                          console.log('Navigating to:', tab.route);
-                          router.push(tab.route as any);
-                        }}
-                      >
-                        <Text style={styles.tabText}>{tab.name}</Text>
-                      </Pressable>
-                    ))}
-                  </ScrollView>
-                </View>
               </View>
             ),
             title: '',
@@ -245,29 +217,5 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
   },
-  tabContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-
-  },
-  tabScrollView: {
-
-    alignItems: 'center',
-    paddingHorizontal: 10,
-  },
-  tabButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    marginHorizontal: 4,
-    borderRadius: 8,
-    backgroundColor: 'rgba(236, 230, 230, 0.9)',
-    borderWidth:1,
-    borderColor: 'rgba(117, 117, 117, 0.9)',
-  },
-  tabText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-  },
+  // 탭 관련 스타일 제거 (하단 버튼으로 통합)
 });

@@ -7,18 +7,18 @@ import { StarContext } from '../../../../context/StarContext';
 
 // 소리 목록
 const sounds = [
-  { sound: require('../../../../assets/sounds/개.mp3'), name: '개' },
-  { sound: require('../../../../assets/sounds/고양이.mp3'), name: '고양이' },
-  { sound: require('../../../../assets/sounds/늑대.mp3'), name: '늑대' },
-  { sound: require('../../../../assets/sounds/닭.mp3'), name: '닭' },
-  { sound: require('../../../../assets/sounds/돼지.mp3'), name: '돼지' },
-  { sound: require('../../../../assets/sounds/말.mp3'), name: '말' },
-  { sound: require('../../../../assets/sounds/사자.mp3'), name: '사자' },
-  { sound: require('../../../../assets/sounds/소.mp3'), name: '소' },
-  { sound: require('../../../../assets/sounds/염소.mp3'), name: '염소' },
-  { sound: require('../../../../assets/sounds/오리.mp3'), name: '오리' },
-  { sound: require('../../../../assets/sounds/원숭이.mp3'), name: '원숭이' },
-  { sound: require('../../../../assets/sounds/코끼리.mp3'), name: '코끼리' }
+  { sound: require('../../../../assets/sounds/dog.mp3'), name: '개' },
+  { sound: require('../../../../assets/sounds/cat.mp3'), name: '고양이' },
+  { sound: require('../../../../assets/sounds/wolf.mp3'), name: '늑대' },
+  { sound: require('../../../../assets/sounds/cock.mp3'), name: '닭' },
+  { sound: require('../../../../assets/sounds/pig.mp3'), name: '돼지' },
+  { sound: require('../../../../assets/sounds/horse.mp3'), name: '말' },
+  { sound: require('../../../../assets/sounds/lion.mp3'), name: '사자' },
+  { sound: require('../../../../assets/sounds/cow.mp3'), name: '소' },
+  { sound: require('../../../../assets/sounds/goat.mp3'), name: '염소' },
+  { sound: require('../../../../assets/sounds/duck.mp3'), name: '오리' },
+  { sound: require('../../../../assets/sounds/monkey.mp3'), name: '원숭이' },
+  { sound: require('../../../../assets/sounds/elephant.mp3'), name: '코끼리' }
 ];
 
 const epsilon = 0.1; // ε-greedy 방식의 탐험 확률

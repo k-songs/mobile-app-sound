@@ -10,18 +10,18 @@ import { StarContext } from '../../../../context/StarContext';
 // 📁 src/config/constants.ts
 // ===================================================================================
 const SOUNDS_CONFIG = [
-    { name: '개', file: require('../../../../assets/sounds/개.mp3') },
-    { name: '고양이', file: require('../../../../assets/sounds/고양이.mp3') },
-    { name: '늑대', file: require('../../../../assets/sounds/늑대.mp3') },
-    { name: '닭', file: require('../../../../assets/sounds/닭.mp3') },
-    { name: '돼지', file: require('../../../../assets/sounds/돼지.mp3') },
-    { name: '말', file: require('../../../../assets/sounds/말.mp3') },
-    { name: '사자', file: require('../../../../assets/sounds/사자.mp3') },
-    { name: '소', file: require('../../../../assets/sounds/소.mp3') },
-    { name: '염소', file: require('../../../../assets/sounds/염소.mp3') },
-    { name: '오리', file: require('../../../../assets/sounds/오리.mp3') },
-    { name: '원숭이', file: require('../../../../assets/sounds/원숭이.mp3') },
-    { name: '코끼리', file: require('../../../../assets/sounds/코끼리.mp3') },
+    { name: '개', file: require('../../../../assets/sounds/dog.mp3') },
+    { name: '고양이', file: require('../../../../assets/sounds/cat.mp3') },
+    { name: '늑대', file: require('../../../../assets/sounds/wolf.mp3') },
+    { name: '닭', file: require('../../../../assets/sounds/cock.mp3') },
+    { name: '돼지', file: require('../../../../assets/sounds/pig.mp3') },
+    { name: '말', file: require('../../../../assets/sounds/horse.mp3') },
+    { name: '사자', file: require('../../../../assets/sounds/lion.mp3') },
+    { name: '소', file: require('../../../../assets/sounds/cow.mp3') },
+    { name: '염소', file: require('../../../../assets/sounds/goat.mp3') },
+    { name: '오리', file: require('../../../../assets/sounds/duck.mp3') },
+    { name: '원숭이', file: require('../../../../assets/sounds/monkey.mp3') },
+    { name: '코끼리', file: require('../../../../assets/sounds/elephant.mp3') },
 ];
 const LEARNING_RATE = 0.1;
 const DISCOUNT_FACTOR = 0.9;

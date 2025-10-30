@@ -10,23 +10,25 @@ import {
   Text,
   View,
 } from 'react-native';
+import LottieView from 'lottie-react-native';
 import MissionProgressIcon from '../../../../components/MissionProgressIcon';
 import { ClearContext } from '../../../../context/ClearContext';
 import { StarContext } from '../../../../context/StarContext';
 
+
 const sounds = [
-  { sound: require('../../../../assets/sounds/개.mp3'), image: require('../../../../assets/images/개.png'), name: '개' },
-  { sound: require('../../../../assets/sounds/고양이.mp3'), image: require('../../../../assets/images/고양이.png'), name: '고양이' },
-  { sound: require('../../../../assets/sounds/늑대.mp3'), image: require('../../../../assets/images/늑대.png'), name: '늑대' },
-  { sound: require('../../../../assets/sounds/닭.mp3'), image: require('../../../../assets/images/닭.png'), name: '닭' },
-  { sound: require('../../../../assets/sounds/돼지.mp3'), image: require('../../../../assets/images/돼지.png'), name: '돼지' },
-  { sound: require('../../../../assets/sounds/말.mp3'), image: require('../../../../assets/images/말.png'), name: '말' },
-  { sound: require('../../../../assets/sounds/사자.mp3'), image: require('../../../../assets/images/사자.png'), name: '사자' },
-  { sound: require('../../../../assets/sounds/소.mp3'), image: require('../../../../assets/images/소.png'), name: '소' },
-  { sound: require('../../../../assets/sounds/염소.mp3'), image: require('../../../../assets/images/염소.png'), name: '염소' },
-  { sound: require('../../../../assets/sounds/오리.mp3'), image: require('../../../../assets/images/오리.png'), name: '오리' },
-  { sound: require('../../../../assets/sounds/원숭이.mp3'), image: require('../../../../assets/images/원숭이.png'), name: '원숭이' },
-  { sound: require('../../../../assets/sounds/코끼리.mp3'), image: require('../../../../assets/images/코끼리.png'), name: '코끼리' },
+  { sound: require('../../../../assets/sounds/dog.mp3'), image: require('../../../../assets/images/dog.png'), name: '개' },
+  { sound: require('../../../../assets/sounds/cat.mp3'), image: require('../../../../assets/images/cat.png'), name: '고양이' },
+  { sound: require('../../../../assets/sounds/wolf.mp3'), image: require('../../../../assets/images/wolf.png'), name: '늑대' },
+  { sound: require('../../../../assets/sounds/cock.mp3'), image: require('../../../../assets/images/cock.png'), name: '닭' },
+  { sound: require('../../../../assets/sounds/pig.mp3'), image: require('../../../../assets/images/pig.png'), name: '돼지' },
+  { sound: require('../../../../assets/sounds/horse.mp3'), image: require('../../../../assets/images/horse.png'), name: '말' },
+  { sound: require('../../../../assets/sounds/lion.mp3'), image: require('../../../../assets/images/lion.png'), name: '사자' },
+  { sound: require('../../../../assets/sounds/cow.mp3'), image: require('../../../../assets/images/cow.png'), name: '소' },
+  { sound: require('../../../../assets/sounds/goat.mp3'), image: require('../../../../assets/images/goat.png'), name: '염소' },
+  { sound: require('../../../../assets/sounds/duck.mp3'), image: require('../../../../assets/images/duck.png'), name: '오리' },
+  { sound: require('../../../../assets/sounds/monkey.mp3'), image: require('../../../../assets/images/monkey.png'), name: '원숭이' },
+  { sound: require('../../../../assets/sounds/elephant.mp3'), image: require('../../../../assets/images/elephant.png'), name: '코끼리' },
 ];
 
 export default function OrderGame() {
@@ -36,6 +38,7 @@ export default function OrderGame() {
   const [dropZonesLayout, setDropZonesLayout] = useState<any[]>([]);
   const [droppedImages, setDroppedImages] = useState<(string | null)[]>([null, null, null]);
   const [attemptCount, setAttemptCount] = useState<number>(0);
+  const [showWaveAnimation, setShowWaveAnimation] = useState(false);
   const dropZoneRefs = useRef<(View | null)[]>([]);
 
   const starContext = useContext(StarContext);
@@ -99,6 +102,8 @@ export default function OrderGame() {
 
   const startGame = async () => {
     setAttemptCount(0);
+    setShowWaveAnimation(true); 
+    
     const soundList: { sound: Audio.Sound; name: string }[] = [];
     for (const soundPath of sounds) {
       const { sound } = await Audio.Sound.createAsync(soundPath.sound);
@@ -109,14 +114,31 @@ export default function OrderGame() {
     setPlayList(shuffledList);
 
     const randomSounds = getRandomElements(shuffledList, 3);
+    
+    // 🔍 콘솔로그: 선택된 3가지 사운드 출력
+    console.log('=== 게임 시작: 선택된 3가지 사운드 ===');
+    randomSounds.forEach((sound, index) => {
+      console.log(`${index + 1}번째 사운드: ${sound.name}`);
+    });
+    console.log('======================================');
+    
     const correctNames = [];
     for (const randomSound of randomSounds) {
       correctNames.push(randomSound.name)
+      console.log(`🔊 재생 중: ${randomSound.name}`); // 재생 중인 사운드 로그
       await randomSound.sound.playAsync();
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
     setCorrectSoundNames(correctNames);
 
+    // 🔍 콘솔로그: 정답 순서 출력
+    console.log('=== 정답 순서 ===');
+    correctNames.forEach((name, index) => {
+      console.log(`${index + 1}번째 정답: ${name}`);
+    });
+    console.log('================');
+
+    setShowWaveAnimation(false); // 웨이브 애니메이션 종료
     setIsGameStarted(true);
     alert('소리 재생이 끝났습니다! 선택하세요.');
   };
@@ -130,13 +152,24 @@ export default function OrderGame() {
     const currentAttempt = attemptCount + 1;
     setAttemptCount(currentAttempt);
     
+    // 🔍 콘솔로그: 정답 제출 시 비교 결과
+    console.log('=== 정답 제출 결과 ===');
+    console.log('정답 순서:', correctSoundNames);
+    console.log('사용자 답:', droppedImages);
+    
     let correct = true;
     for (let i = 0; i < correctSoundNames.length; i++) {
+      const isMatch = correctSoundNames[i] === droppedImages[i];
+      console.log(`${i + 1}번째: ${correctSoundNames[i]} vs ${droppedImages[i]} → ${isMatch ? '✅ 정답' : '❌ 오답'}`);
       if (correctSoundNames[i] != droppedImages[i]) {
         correct = false;
         break;
       }
     }
+    
+    console.log(`최종 결과: ${correct ? '🎉 정답!' : '😅 오답!'}`);
+    console.log(`시도 횟수: ${currentAttempt}회`);
+    console.log('====================');
 
     if (correct) {
       alert('정답! 잘 하셨습니다!');
@@ -236,6 +269,7 @@ export default function OrderGame() {
 
   return (
     <View style={styles.container}>
+      {/* MissionProgressIcon은 항상 렌더링 */}
       <MissionProgressIcon
         gameId="orderGame"
         title="소리 순서 미션"
@@ -246,10 +280,28 @@ export default function OrderGame() {
         ]}
       />
 
-      {!isGameStarted ? (
+      {/* Wave 애니메이션 */}
+      {showWaveAnimation && (
+        <View style={styles.waveContainer}>
+          <LottieView
+            source={require('../../../../assets/lottie/wave.json')}
+            autoPlay
+            loop
+            style={styles.waveAnimation}
+          />
+          <Text style={styles.loadingText}>소리를 재생하고 있습니다...</Text>
+        </View>
+      )}
+
+      {/* 게임 시작 버튼 */}
+      {!isGameStarted && !showWaveAnimation && (
         <Button title="게임시작" onPress={startGame} />
-      ) : (
+      )}
+
+      {/* 게임 진행 중 UI */}
+      {isGameStarted && !showWaveAnimation && (
         <ScrollView style={{ flexGrow: 1 }} contentContainerStyle={{ alignItems: 'center' }}>
+          {/* 드래그 가능한 이미지들 */}
           <View style={styles.imagesContainer}>
             {sounds.map((soundItem, index) => {
               const isDropped = droppedImages.includes(soundItem.name);
@@ -265,6 +317,8 @@ export default function OrderGame() {
               );
             })}
           </View>
+
+          {/* 드롭 존 */}
           <View style={styles.dropZoneContainer}>
             {Array.from({ length: 3 }, (_, i) => {
               const imageName = droppedImages[i];
@@ -301,6 +355,7 @@ export default function OrderGame() {
               );
             })}
           </View>
+
           <Button title="정답 제출" onPress={submit} />
         </ScrollView>
       )}
@@ -349,5 +404,21 @@ const styles = StyleSheet.create({
     margin: 10,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  waveContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+   
+  },
+  waveAnimation: {
+    width: 200,
+    height: 200,
+  },
+  loadingText: {
+    marginTop: 20,
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
   },
 });

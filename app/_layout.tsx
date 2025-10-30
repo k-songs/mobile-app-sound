@@ -5,6 +5,8 @@ import { StatusBar } from "expo-status-bar";
 import { Asset } from "expo-asset";
 import Constants from "expo-constants";
 import * as SplashScreen from "expo-splash-screen";
+import { StarProvider } from "../context/StarContext";
+import { ClearProvider } from "../context/ClearContext";
 
 SplashScreen.preventAutoHideAsync().catch(() => {
 
@@ -110,11 +112,15 @@ function AnimatedSplashScreen({
 
 export default function RootLayout() {
   return (
-    <AnimatedAppLoader image={require("../assets/images/splash.png")}>
-      <StatusBar style="auto" animated hidden={false} />
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" />
-      </Stack>
-    </AnimatedAppLoader>
+    <StarProvider>
+      <ClearProvider>
+        <AnimatedAppLoader image={require("../assets/images/splash.png")}>
+          <StatusBar style="auto" animated hidden={false} />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" />
+          </Stack>
+        </AnimatedAppLoader>
+      </ClearProvider>
+    </StarProvider>
   );
 }
