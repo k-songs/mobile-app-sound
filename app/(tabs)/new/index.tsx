@@ -8,7 +8,7 @@ import { useRouter } from 'expo-router';
 const games = [
     { id: 'matchGame', name: '소리 맞추기', icon: 'game-controller-outline', route: '/new/(games)/matchGame' },
     { id: 'orderGame', name: '소리 순서', icon: 'swap-horizontal-outline', route: '/new/(games)/orderGame' },
-    { id: 'music', name: '피아노', icon: 'musical-notes-outline', route: '/new/(games)/music' },
+    { id: 'music', name: '피아노', icon: 'musical-notes-outline', route: '/activity' },
     { id: 'matchGameRL', name: '강화학습', icon: 'rocket-outline', route: '/new/(games)/matchGameAI' },
     { id: 'matchGamePG', name: 'PG', icon: 'analytics-outline', route: '/new/(games)/matchGamePG' },
 ] as const;

@@ -8,6 +8,7 @@ import {
   Pressable,
   View,
 } from "react-native";
+import LottieView from 'lottie-react-native';
 const AnimatedTabBarButton = ({
   children,
   onPress,
@@ -202,19 +203,50 @@ export default function TabLayout() {
           name="activity"
           options={{
             tabBarLabel: () => null,
-            tabBarIcon: ({ focused }) => (
-              <Ionicons
-                name="heart-outline"
-                size={24}
-                color={
-                  focused
-                    ? colorScheme === "dark"
-                      ? "white"
-                      : "black"
-                    : "gray"
+            tabBarIcon: ({ focused, size = 24 }) => {
+              const lottieRef = useRef<LottieView>(null);
+              
+              useEffect(() => {
+                if (focused && lottieRef.current) {
+                  // 탭이 활성화되면 애니메이션 재생
+                  lottieRef.current.play();
                 }
-              />
-            ),
+              }, [focused]);
+
+              return (
+                <View style={{ 
+                  width: size, 
+                  height: size, 
+                  alignItems: 'center', 
+                  justifyContent: 'center' 
+                }}>
+                  <LottieView
+                    ref={lottieRef}
+                    source={require('../../assets/lottie/piano-keys.json')}
+                    style={{
+                      width: size * 1.2,
+                      height: size * 1.2,
+                    }}
+                    loop={false}
+                    autoPlay={false}
+                    colorFilters={[
+                      {
+                        keypath: "흰 건반 그룹",
+                        color: focused 
+                          ? (colorScheme === "dark" ? "#ffffff" : "#000000")
+                          : "#cccccc"
+                      },
+                      {
+                        keypath: "검은 건반 그룹", 
+                        color: focused
+                          ? (colorScheme === "dark" ? "#ff6b35" : "#2563eb")
+                          : "#666666"
+                      }
+                    ]}
+                  />
+                </View>
+              );
+            },
           }}
         />
         <Tabs.Screen
