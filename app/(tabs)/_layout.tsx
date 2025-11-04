@@ -238,25 +238,7 @@ export default function TabLayout() {
         />
 
 
-        <Tabs.Screen
-          name="new"
-          options={{
-            tabBarLabel: () => null,
-            tabBarIcon: ({ focused }) => (
-              <Ionicons
-                name="key"
-                size={24}
-                color={
-                  focused
-                    ? colorScheme === "dark"
-                      ? "white"
-                      : "black"
-                    : "gray"
-                }
-              />
-            ),
-          }}
-        />
+   
 
 
       </Tabs>

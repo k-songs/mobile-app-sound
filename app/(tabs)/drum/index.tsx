@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { LinearGradient } from 'expo-linear-gradient';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -9,11 +9,20 @@ import InteractiveDrumSet from '../../../components/game/InteractiveDrumSet';
 import { InstrumentType } from '../../../constants/drumSounds';
 
 // 통합 모드: 인터랙티브 + 기존 게임 모두 포함
-import { TouchableOpacity, Animated } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import DrumGame from '../../../components/game/DrumGame';
 import DrumGameOverScreen from '../../../screens/DrumGameOverScreen';
 import { DifficultyType } from '../../../constants/drumSounds';
+import Animated, { 
+  useSharedValue, 
+  withSpring, 
+  withTiming, 
+  interpolate, 
+  Easing 
+} from 'react-native-reanimated';
+
+const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
 export default function Index() {
   const insets = useSafeAreaInsets();
@@ -29,8 +38,12 @@ export default function Index() {
   const [finalMaxScore, setFinalMaxScore] = useState(0);
   const [finalPercentage, setFinalPercentage] = useState(0);
 
-  const beginnerScale = useRef(new Animated.Value(1)).current;
-  const intermediateScale = useRef(new Animated.Value(1)).current;
+  const beginnerScale = useSharedValue(1);
+  const intermediateScale = useSharedValue(1);
+  const beginnerElevation = useSharedValue(12);
+  const intermediateElevation = useSharedValue(12);
+  const beginnerShimmer = useSharedValue(0);
+  const intermediateShimmer = useSharedValue(0);
 
   // 인터랙티브 모드 핸들러
   const handleInstrumentPlay = (instrument: InstrumentType) => {
@@ -38,13 +51,27 @@ export default function Index() {
   };
 
   // 기존 게임 모드 핸들러들
-  const animateButton = (scaleValue: Animated.Value, toValue: number) => {
-    Animated.spring(scaleValue, {
-      toValue,
-      useNativeDriver: true,
-      friction: 3,
-      tension: 40,
-    }).start();
+  const animateButton = (scaleValue: Animated.SharedValue<number>, toValue: number) => {
+    scaleValue.value = withSpring(toValue, {
+      damping: 3,
+      stiffness: 40,
+    });
+  };
+
+  const animateElevation = (elevationValue: Animated.SharedValue<number>, toValue: number) => {
+    elevationValue.value = withSpring(toValue, {
+      damping: 3,
+      stiffness: 40,
+    });
+  };
+
+  const animateShimmer = (shimmerValue: Animated.SharedValue<number>) => {
+    shimmerValue.value = withTiming(1, {
+      duration: 300,
+      easing: Easing.linear,
+    }, () => {
+      shimmerValue.value = 0;
+    });
   };
 
   const handleDifficultyPress = (difficulty: DifficultyType) => {
@@ -73,6 +100,8 @@ export default function Index() {
     setFinalPercentage(0);
     animateButton(beginnerScale, 1);
     animateButton(intermediateScale, 1);
+    beginnerElevation.value = 12;
+    intermediateElevation.value = 12;
   };
 
   const handleGoHome = () => {
@@ -80,6 +109,8 @@ export default function Index() {
     setIsGameOver(false);
     animateButton(beginnerScale, 1);
     animateButton(intermediateScale, 1);
+    beginnerElevation.value = 12;
+    intermediateElevation.value = 12;
   };
 
   return (
@@ -124,7 +155,7 @@ export default function Index() {
           {/* 섹션 2: 학습 퀴즈 게임 */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>📚 학습 퀴즈 모드</Text>
+              <Text style={styles.sectionTitle}>드럼 소리 맞히기</Text>
               <Text style={styles.sectionSubtitle}>
                 소리를 듣고 정확한 악기를 맞춰보세요!
               </Text>
@@ -132,33 +163,73 @@ export default function Index() {
               <View style={styles.difficultyContainer}>
                 <TouchableOpacity
                   onPress={() => handleDifficultyPress('beginner')}
-                  onPressIn={() => animateButton(beginnerScale, 1.05)}
-                  onPressOut={() => animateButton(beginnerScale, currentDifficulty === 'beginner' ? 1.1 : 1)}
+                  onPressIn={() => {
+                    animateButton(beginnerScale, 1.05);
+                    animateElevation(beginnerElevation, 20);
+                    animateShimmer(beginnerShimmer);
+                  }}
+                  onPressOut={() => {
+                    animateButton(beginnerScale, currentDifficulty === 'beginner' ? 1.1 : 1);
+                    animateElevation(beginnerElevation, 12);
+                  }}
                 >
                   <Animated.View
                     style={[
+                      { transform: [{ scale: beginnerScale.value }] },
                       styles.difficultyButton,
-                      currentDifficulty === 'beginner' && styles.activeDifficulty,
-                      { transform: [{ scale: beginnerScale }] }
+                      { elevation: beginnerElevation.value },
                     ]}
                   >
-                    <Text style={styles.difficultyText}>초급</Text>
+                    <AnimatedLinearGradient
+                      colors={['#FFD700', '#FFA500']}
+                      start={{
+                        x: interpolate(beginnerShimmer.value, [0, 1], [-0.5, 1.5]),
+                        y: 0.5,
+                      }}
+                      end={{
+                        x: interpolate(beginnerShimmer.value, [0, 1], [0.5, 2.5]),
+                        y: 0.5,
+                      }}
+                      style={styles.gradientFill}
+                    >
+                      <Text style={styles.difficultyText}>맛보기</Text>
+                    </AnimatedLinearGradient>
                   </Animated.View>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   onPress={() => handleDifficultyPress('intermediate')}
-                  onPressIn={() => animateButton(intermediateScale, 1.05)}
-                  onPressOut={() => animateButton(intermediateScale, currentDifficulty === 'intermediate' ? 1.1 : 1)}
+                  onPressIn={() => {
+                    animateButton(intermediateScale, 1.05);
+                    animateElevation(intermediateElevation, 20);
+                    animateShimmer(intermediateShimmer);
+                  }}
+                  onPressOut={() => {
+                    animateButton(intermediateScale, currentDifficulty === 'intermediate' ? 1.1 : 1);
+                    animateElevation(intermediateElevation, 12);
+                  }}
                 >
                   <Animated.View
                     style={[
+                      { transform: [{ scale: intermediateScale.value }] },
                       styles.difficultyButton,
-                      currentDifficulty === 'intermediate' && styles.activeDifficulty,
-                      { transform: [{ scale: intermediateScale }] }
+                      { elevation: intermediateElevation.value },
                     ]}
                   >
-                    <Text style={styles.difficultyText}>중급</Text>
+                    <AnimatedLinearGradient
+                      colors={['#FFD700', '#FFA500']}
+                      start={{
+                        x: interpolate(intermediateShimmer.value, [0, 1], [-0.5, 1.5]),
+                        y: 0.5,
+                      }}
+                      end={{
+                        x: interpolate(intermediateShimmer.value, [0, 1], [0.5, 2.5]),
+                        y: 0.5,
+                      }}
+                      style={styles.gradientFill}
+                    >
+                      <Text style={styles.difficultyText}>도전</Text>
+                    </AnimatedLinearGradient>
                   </Animated.View>
                 </TouchableOpacity>
               </View>
@@ -218,7 +289,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 8,
     color: '#333',
- 
   },
   sectionSubtitle: {
     fontSize: 16,
@@ -226,9 +296,6 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 15,
     lineHeight: 22,
- 
-  
-    
   },
   currentInstrument: {
     fontSize: 18,
@@ -273,23 +340,23 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   difficultyButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 25,
-    borderRadius: 25,
-    backgroundColor: 'rgba(76, 175, 80, 0.2)',
-    borderColor: '#4CAF50',
-    borderWidth: 2,
+    borderRadius: 30,
     minWidth: 100,
+    elevation: 12, // Android shadow
+  },
+  gradientFill: {
+    flex: 1,
+    borderRadius: 30,
+    paddingVertical: 10,
+    paddingHorizontal: 22,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  activeDifficulty: {
-    backgroundColor: '#4CAF50',
-    borderColor: '#388E3C',
+    overflow: 'hidden', // 쉬머 효과를 위해 추가
   },
   difficultyText: {
     fontWeight: 'bold',
     fontSize: 16,
+    color: 'white', // 글자색을 흰색으로 변경
   },
   
   // 게임 섹션 스타일

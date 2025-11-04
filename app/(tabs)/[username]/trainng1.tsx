@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 
-export default function trainng1() {
+export default function trainng2() {
   return (
     <View
       style={{
@@ -9,7 +9,7 @@ export default function trainng1() {
         alignItems: "center",
       }}
     >
-      <Text>trainng1</Text>
+      <Text>training2</Text>
     </View>
   );
 }
