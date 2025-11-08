@@ -16,6 +16,7 @@
       "targetSdkVersion": 36,
       "minSdkVersion": 24,
       "edgeToEdgeEnabled": true,
+      "jsEngine": "hermes",
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",
@@ -77,7 +78,8 @@
       ],
       "expo-secure-store",
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true

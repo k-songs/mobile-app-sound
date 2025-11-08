@@ -8,15 +8,15 @@ import type {
   ParamListBase,
   TabNavigationState,
 } from "@react-navigation/native";
-import { Pressable, View, Image, StyleSheet } from "react-native";
+import { Pressable, View, StyleSheet } from "react-native";
 import { useState } from "react";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Ionicons } from "@expo/vector-icons";
 import SideMenu from "@/components/SideMenu";
-import { BlurView } from "expo-blur";
-import * as React from "react";
+
+
 const { Navigator } = createMaterialTopTabNavigator();
 
 
@@ -41,35 +41,25 @@ export default function TabLayout() {
         { paddingTop: insets.top, paddingBottom: insets.bottom },
       ]}
     >
-      {React.createElement(
-        BlurView as any,
-        { style: styles.header, intensity: 70 },
-        <>
-          <Pressable
-            style={styles.menuButton}
-            onPress={() => setIsSideMenuOpen(true)}
-          >
-            <Ionicons name="menu" size={24} color="black" />
-          </Pressable>
+      <View style={[styles.header, { backgroundColor: 'rgba(255,255,255,0.3)' }]}>
+        <Pressable
+          style={styles.menuButton}
+          onPress={() => setIsSideMenuOpen(true)}
+        >
+          <Ionicons name="menu" size={24} color="black" />
+        </Pressable>
+      </View>
 
-          <SideMenu
-            isVisible={isSideMenuOpen}
-            onClose={() => setIsSideMenuOpen(false)}
-          />
-
-          <Image
-            source={require("../../../assets/images/splash.png")}
-            style={styles.headerLogo}
-          />
-        </>
-      )}
-
+      <SideMenu
+        isVisible={isSideMenuOpen}
+        onClose={() => setIsSideMenuOpen(false)}
+      />
 
       <MaterialTopTabs
         screenOptions={{
           lazy: true,
           tabBarStyle: {
-            backgroundColor: "white",
+            backgroundColor: "rgba(255,255,255,0.2)",
             boxShadow: "none",
             position: "relative",
           },
@@ -103,11 +93,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 16,
+    height: 60,
+    paddingVertical: 12,
   },
   menuButton: {
-    padding: 8,
+    padding: 12,
     position: "absolute",
     left: 16,
+    top: 8,
   },
   headerLogo: {
     width: 32,

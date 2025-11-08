@@ -1,48 +1,16 @@
 import { Stack } from "expo-router";
-import { useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Animated } from "react-native";
+import React, { useEffect, useRef, useState, useMemo } from "react";
+import { View, StyleSheet, Animated, Text } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { Asset } from "expo-asset";
-import Constants from "expo-constants";
 import * as SplashScreen from "expo-splash-screen";
 import { StarProvider } from "../context/StarContext";
 import { ClearProvider } from "../context/ClearContext";
+import { ThemeProvider } from "../context/ThemeContext";
+import { BackgroundCanvas } from "../components/BackgroundCanvas";
 
-SplashScreen.preventAutoHideAsync().catch(() => {
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
-});
-
-function AnimatedAppLoader({
-  children,
-  image,
-}: {
-  children: React.ReactNode;
-  image: number;
-}) {
-  const [isSplashReady, setSplashReady] = useState(false);
-
-  useEffect(() => {
-    async function prepare() {
-      await Asset.loadAsync(image);
-      setSplashReady(true);
-    }
-    prepare();
-  }, [image]);
-
-  if (!isSplashReady) {
-    return null;
-  }
-
-  return<AnimatedSplashScreen image={image}>{children}</AnimatedSplashScreen>;
-}
-
-function AnimatedSplashScreen({
-  children,
-  image,
-}: {
-  children: React.ReactNode;
-  image: number;
-}) {
+function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; image: number }) {
   const [isAppReady, setAppReady] = useState(false);
   const [isSplashAnimationComplete, setAnimationComplete] = useState(false);
   const animation = useRef(new Animated.Value(1)).current;
@@ -53,7 +21,9 @@ function AnimatedSplashScreen({
         toValue: 0,
         duration: 2000,
         useNativeDriver: true,
-      }).start(() => setAnimationComplete(true));
+      }).start(() => {
+        setAnimationComplete(true);
+      });
     }
   }, [isAppReady]);
 
@@ -67,60 +37,92 @@ function AnimatedSplashScreen({
     }
   };
 
-  const rotateValue = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0deg", "360deg"],
-  });
-
-  const splashConfig = Constants.expoConfig?.splash || {};
-  const backgroundColor = splashConfig.backgroundColor || "#ffffff";
-  const resizeMode = splashConfig.resizeMode || "contain";
-  const imageWidth = splashConfig.imageWidth || 200;
+  const animatedValues = useMemo(() => ({
+    rotateValue: animation.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["340deg", "-20deg"],
+    }),
+    scaleValue: animation.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0.5, 1.5],
+    }),
+  }), [animation]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       {isAppReady && children}
       {!isSplashAnimationComplete && (
-        <Animated.View
-          pointerEvents="none" // 터치 이벤트 무시
-          style={[
-            {
-              ...StyleSheet.absoluteFillObject,
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: backgroundColor,
-              opacity: animation,
-            },
-          ]}
-        >
-          <Animated.Image
-            source={image}
-            style={{
-              resizeMode: resizeMode as any,
-              width: imageWidth,
-              transform: [{ scale: animation }, { rotate: rotateValue }],
-            }}
-            onLoadEnd={onImageLoaded}
-            fadeDuration={0}
+        <>
+          <Animated.View
+            style={[
+              styles.background,
+              {
+                opacity: animation,
+              },
+            ]}
           />
-        </Animated.View>
+          
+          <View style={styles.imageContainer}>
+        
+            <Animated.Image
+              source={image}
+              style={[
+                styles.image,
+                {
+                  opacity: animation,
+                  transform: [
+                    { scale: animatedValues.scaleValue },
+                    { rotate: animatedValues.rotateValue },
+                  ],
+                },
+              ]}
+              onLoadEnd={onImageLoaded}
+              fadeDuration={0}
+            />
+            
+          </View>
+        </>
       )}
+
     </View>
   );
 }
 
 export default function RootLayout() {
   return (
-    <StarProvider>
-      <ClearProvider>
-        <AnimatedAppLoader image={require("../assets/images/splash.png")}>
-          <StatusBar style="auto" animated hidden={false} />
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(tabs)" />
-          </Stack>
-        </AnimatedAppLoader>
-      </ClearProvider>
-    </StarProvider>
+    <ThemeProvider>
+      <StarProvider>
+        <ClearProvider>
+          <BackgroundCanvas>
+            <AnimatedSplashScreen image={require("../assets/images/splash.png")}>
+              <StatusBar style="auto" animated hidden={false} />
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="(tabs)" />
+              </Stack>
+            </AnimatedSplashScreen>
+          </BackgroundCanvas>
+        </ClearProvider>
+      </StarProvider>
+    </ThemeProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  background: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "#cfefee",
+  },
+  imageContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  image: {
+    width: 300,
+    height: 300,
+    resizeMode: "contain",
+  },
+});

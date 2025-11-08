@@ -60,10 +60,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 15,
     elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
     minHeight: 60,
   },
   playButton: {
@@ -75,10 +71,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 10,
     elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3,
     minHeight: 55,
   },
   resetButton: {
@@ -90,16 +82,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 10,
     elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
     minHeight: 50,
   },
   disabledButton: {
     backgroundColor: '#CCCCCC',
     elevation: 0,
-    shadowOpacity: 0,
   },
   startButtonText: {
     color: 'white',

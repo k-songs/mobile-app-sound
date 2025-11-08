@@ -39,11 +39,99 @@ export function InteractiveDrumSet({ onInstrumentPlay }: InteractiveDrumSetProps
   const [dimensions, setDimensions] = useState({ width: initialScreenWidth, height: initialScreenHeight });
   const [characterPosition, setCharacterPosition] = useState({ x: 0, y: 0 });
   const [currentInstrument, setCurrentInstrument] = useState<InstrumentType | null>(null);
+  const [showHint, setShowHint] = useState(true);
 
   // 애니메이션 값들
   const translateX = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(1)).current;
+  const characterPulse = useRef(new Animated.Value(1)).current;
+  const markerPulse = useRef(new Animated.Value(1)).current;
+  const hintOpacity = useRef(new Animated.Value(1)).current;
+
+  // 캐릭터 초기 위치를 하단 중앙으로 설정
+  useEffect(() => {
+    const currentAvailableHeight = dimensions.height - insets.top - insets.bottom;
+    const currentAvailableWidth = dimensions.width - insets.left - insets.right;
+    const currentDrumSetSize = Math.min(currentAvailableWidth * 0.9, currentAvailableHeight * 0.6 / DRUM_IMAGE_ASPECT_RATIO);
+    const currentCharacterSize = Math.max(40, currentDrumSetSize * 0.15);
+    
+    const centerX = (currentDrumSetSize - currentCharacterSize) / 2;
+    const bottomY = currentDrumSetSize - currentCharacterSize - 20; // 하단에서 20px 여유
+    
+    translateX.setValue(centerX);
+    translateY.setValue(bottomY);
+    setCharacterPosition({ x: centerX, y: bottomY });
+  }, []);
+
+  // 캐릭터 펄스 애니메이션
+  useEffect(() => {
+    const pulseAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(characterPulse, {
+          toValue: 1.15,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.timing(characterPulse, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    pulseAnimation.start();
+    return () => pulseAnimation.stop();
+  }, []);
+
+  // 드럼 마커 펄스 애니메이션
+  useEffect(() => {
+    const markerAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(markerPulse, {
+          toValue: 1.3,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(markerPulse, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    markerAnimation.start();
+    return () => markerAnimation.stop();
+  }, []);
+
+  // 힌트 페이드 인/아웃 애니메이션
+  useEffect(() => {
+    const hintAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(hintOpacity, {
+          toValue: 0.3,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(hintOpacity, {
+          toValue: 1,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    hintAnimation.start();
+    
+    // 10초 후 힌트 숨기기
+    const timer = setTimeout(() => {
+      setShowHint(false);
+    }, 10000);
+    
+    return () => {
+      hintAnimation.stop();
+      clearTimeout(timer);
+    };
+  }, []);
 
   // 디바이스 크기 변경 감지 및 캐릭터 위치 조정
   useEffect(() => {
@@ -171,6 +259,11 @@ export function InteractiveDrumSet({ onInstrumentPlay }: InteractiveDrumSetProps
 
   // 제스처 
   const onGestureEvent = (event: PanGestureHandlerGestureEvent) => {
+    // 첫 터치 시 힌트 숨기기
+    if (showHint) {
+      setShowHint(false);
+    }
+
     const { translationX, translationY } = event.nativeEvent;
 
     // Safe Area 경계 제한
@@ -244,18 +337,27 @@ export function InteractiveDrumSet({ onInstrumentPlay }: InteractiveDrumSetProps
           const currentAvailableHeight = dimensions.height - insets.top - insets.bottom;
           const currentAvailableWidth = dimensions.width - insets.left - insets.right;
           const currentDrumSetSize = Math.min(currentAvailableWidth * 0.9, currentAvailableHeight * 0.6 / DRUM_IMAGE_ASPECT_RATIO);
+          const markerSize = 30;
           return (
-            <View
+            <Animated.View
               key={instrument}
               style={[
                 styles.instrumentMarker,
                 {
-                  left: position.x * currentDrumSetSize - 10,
-                  top: position.y * currentDrumSetSize - 10,
-                  backgroundColor: currentInstrument === instrument ? '#4CAF50' : '#FF5722',
+                  left: position.x * currentDrumSetSize - markerSize / 2,
+                  top: position.y * currentDrumSetSize - markerSize / 2,
+                  width: markerSize,
+                  height: markerSize,
+                  borderRadius: markerSize / 2,
+                  backgroundColor: currentInstrument === instrument ? '#4CAF50' : '#FF9800',
+                  transform: [{ scale: markerPulse }],
                 },
               ]}
-            />
+            >
+              <View style={styles.markerInner}>
+                <Text style={styles.markerText}>🎵</Text>
+              </View>
+            </Animated.View>
           );
         })}
 
@@ -273,7 +375,7 @@ export function InteractiveDrumSet({ onInstrumentPlay }: InteractiveDrumSetProps
                 transform: [
                   { translateX },
                   { translateY },
-                  { scale },
+                  { scale: Animated.multiply(scale, characterPulse) },
                 ],
               },
             ]}
@@ -285,6 +387,24 @@ export function InteractiveDrumSet({ onInstrumentPlay }: InteractiveDrumSetProps
             />
           </Animated.View>
         </PanGestureHandler>
+
+        {/* 캐릭터 위의 드래그 힌트 */}
+        {showHint && (
+          <Animated.View 
+            style={[
+              styles.hintMessage,
+              {
+                opacity: hintOpacity,
+                transform: [
+                  { translateX: Animated.subtract(translateX, new Animated.Value(60)) },
+                  { translateY: Animated.subtract(translateY, new Animated.Value(characterSize + 215)) }
+                ]
+              }
+            ]}
+          >
+            <Text style={styles.hintMessageText}>밀어서 악기에 붙이세요!</Text>
+          </Animated.View>
+        )}
       </View>
       
       {/* 현재 악기 표시 */}
@@ -319,10 +439,21 @@ const styles = StyleSheet.create({
   },
   instrumentMarker: {
     position: 'absolute',
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    opacity: 0.7,
+    opacity: 0.85,
+    elevation: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: 'white',
+  },
+  markerInner: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  markerText: {
+    fontSize: 16,
   },
   character: {
     position: 'absolute',
@@ -331,6 +462,22 @@ const styles = StyleSheet.create({
   characterImage: {
     width: '100%',
     height: '100%',
+  },
+  hintMessage: {
+    position: 'absolute',
+    backgroundColor: 'rgba(255, 152, 0, 0.95)',
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 25,
+    elevation: 5,
+    borderWidth: 2,
+    borderColor: 'white',
+  },
+  hintMessageText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
   },
   currentInstrumentDisplay: {
     backgroundColor: '#4CAF50',

@@ -147,10 +147,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignItems: 'center',
     elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
   },
   scoreText: {
     fontSize: 18,
@@ -169,10 +165,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     minHeight: 300,
     elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
   },
   feedbackContainer: {
     justifyContent: 'center',

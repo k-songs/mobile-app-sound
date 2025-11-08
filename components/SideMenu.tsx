@@ -30,8 +30,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ isVisible, onClose }) => {
   const closeAppearance = () => {
     setIsAppearanceVisible(false);
   };
-  
-
 
   // Use Modal for better presentation and handling outside clicks
   return (
@@ -43,8 +41,8 @@ const SideMenu: React.FC<SideMenuProps> = ({ isVisible, onClose }) => {
         onRequestClose={onClose} // Allows closing with back button on Android
       >
         <BlurView
-          intensity={10}
-          tint="default"
+          intensity={colorScheme === "dark" ? 0 : 10}
+          tint="default"    //light, dark, default 전체적인 배경 색상 1군데
           style={styles.overlay}
         >
           {/* Touchable overlay to close the menu when clicking outside */}
@@ -76,7 +74,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isVisible, onClose }) => {
                       : styles.menuTextLight,
                   ]}
                 >
-                  배경색 변경
+                  Appearance
                 </Text>
                 <Ionicons name="chevron-forward" size={20} color="#888" />
               </TouchableOpacity>
@@ -104,9 +102,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ isVisible, onClose }) => {
                   Settings
                 </Text>
               </TouchableOpacity>
-
-              <View style={styles.separator} />
-
               <TouchableOpacity style={styles.menuItem}>
                 <Text
                   style={[
@@ -116,10 +111,9 @@ const SideMenu: React.FC<SideMenuProps> = ({ isVisible, onClose }) => {
                       : styles.menuTextLight,
                   ]}
                 >
-                  Report
+                  Report a problem
                 </Text>
               </TouchableOpacity>
-        
             </View>
           </SafeAreaView>
         </BlurView>
@@ -128,7 +122,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isVisible, onClose }) => {
         animationType="none"
         transparent={true}
         visible={isAppearanceVisible}
-        onRequestClose={closeAppearance} 
+        onRequestClose={closeAppearance} // Allows closing with back button on Android
       >
         <View style={styles.overlay}>
           <TouchableOpacity
@@ -163,7 +157,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isVisible, onClose }) => {
                     : styles.appearanceTextLight,
                 ]}
               >
-                테마 변경
+                Appearance
               </Text>
             </View>
             <View style={{ flexDirection: "row", gap: 10 }}>
@@ -242,7 +236,8 @@ const SideMenu: React.FC<SideMenuProps> = ({ isVisible, onClose }) => {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-
+    // The BlurView replaces the semi-transparent background
+    //backgroundColor: 'rgba(0, 0, 0, 0.3)',  // 전체적인 배경 색상 2군데
     position: "relative",
   },
   touchableOverlay: {
@@ -251,18 +246,19 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-
+    // Ensure this overlay doesn't block interaction with the menu itself
+    // It's placed behind the menu container implicitly due to order or explicitly with zIndex if needed
   },
   menuContainer: {
     position: "absolute",
-    top: 60, 
+    top: 60,
     left: 10,
     width: "75%",
     maxWidth: 320,
-    borderRadius: 15, 
-    paddingVertical: 5, 
-    paddingHorizontal: 0, 
-    overflow: "hidden", 
+    borderRadius: 15,
+    paddingVertical: 5,
+    paddingHorizontal: 0,
+    overflow: "hidden",
   },
   menuContainerLight: {
     backgroundColor: "white",
@@ -274,15 +270,15 @@ const styles = StyleSheet.create({
     borderColor: "#202020",
   },
   menuContent: {
-    paddingVertical: 10,
-    paddingHorizontal: 15, 
+    paddingVertical: 10, // Inner padding for the content block
+    paddingHorizontal: 15, // Inner horizontal padding
   },
   menuItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 16,
-    paddingHorizontal: 5, 
+    paddingVertical: 16, // Slightly increased vertical padding for items
+    paddingHorizontal: 5, // Horizontal padding within the content block
   },
   menuText: {
     fontSize: 16,
@@ -293,15 +289,6 @@ const styles = StyleSheet.create({
   },
   menuTextDark: {
     color: "white",
-  },
-  logoutText: {
-    color: "#FF3B30", 
-  },
-  separator: {
-    height: StyleSheet.hairlineWidth, 
-    backgroundColor: "#D1D1D6", 
-    marginVertical: 8,
-    marginHorizontal: -15,
   },
   appearanceContainer: {
     justifyContent: "center",

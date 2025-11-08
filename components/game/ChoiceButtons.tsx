@@ -62,10 +62,6 @@ const styles = StyleSheet.create({
     maxWidth: '48%',
     minHeight: 120,
     elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
   },
   instrumentIcon: {
     marginBottom: 8,
